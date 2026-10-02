@@ -2,6 +2,18 @@
 
 トロッコ問題を題材にした横スクロールの1ボタン破壊ゲーム。
 
+**▶ ブラウザですぐ遊べる: https://takosasi-dev.github.io/rail-rampage/** （インストール不要。Windows 版は [Releases](https://github.com/takosasi-dev/rail-rampage/releases)）
+
+![走っているところ](docs/images/play.gif)
+
+- **操作は Space（またはクリック）だけ。** 押すと次の分岐が切り替わる
+- 標的を壊すほど勢いが溜まって速くなる。壁は速さで突き破り、ジャンプは速さで飛び越える。足りなければ激突・脱線で不合格
+- 試験10個＋裏試験5つ、車両5台、終わりの無い「無限軌道」、課題・金★・ゴースト・検定印30個
+
+| タイトル | 試験の選択 | 車庫 |
+|---|---|---|
+| ![タイトル](docs/images/title.png) | ![試験計画表](docs/images/select.png) | ![車庫](docs/images/garage.png) |
+
 - エンジン: Godot 4.7.2 stable（GDScript 2.0、Compatibility レンダラー）
 - 動作環境: Windows 10 / 11（64bit）、または WebGL 2 が動くブラウザ
 - 開発状況: 開発中（`v0.x`）。数値・条件の多くは仮の値で、試遊しながら調整している
@@ -131,6 +143,8 @@ foreach ($t in "checks", "checks_ui", "checks_select", "checks_result", "checks_
 | `checks_display.gd` | 画面の設定（設定画面の「ゲーム」「画面」のタブのマウスとキーボードでの切り替え・画面の各項目の保存・F11・Web 版で隠す行・画質ごとの照明と影と演出の数・次の試験から効くこと・FPS 表示） |
 | `check_web.mjs` | Web 版を `python -m http.server` で配信し、窓を出さない消音の Chrome で開いて、キーボードだけでステージ1をクリアし、試験記録の累計も含めて開き直しても記録が残るか（AC-16、約1分）。`node tests/check_web.mjs` で回す（先に Web 書き出し。Node 22 以降と Chrome か Edge が要る）。画面の写しは `build\web_check\`。共通部品は `tests/web_lib.mjs` |
 | `shoot_web.mjs` | プレイ画面の絵の見た目の確かめ。Web 版を窓なし・消音の Chrome で開き、タイトル・ステージ選択（2ページ）・設定・試験記録・修了証書・車庫・ポーズと、第1〜10試験を時間帯 A「順に進む」と C「見どころに合わせる」で撮る（約10分）。`node tests/shoot_web.mjs`（先に Web 書き出し）。画面の写しは `build\web_shots\` |
+| `shoot_readme.mjs` | README の絵（`docs/images/`）の元を撮る。Web 版を窓なし・消音の Chrome で開き、タイトル・ステージ選択・車庫と、走っているところの連続写真を撮る（約1分）。`node tests/shoot_readme.mjs [第何試験か]`。写しは `build
+eadme_shots\`。GIF は `ffmpeg -framerate <撮れた fps> -i burst/%04d.jpg -t 7 -vf "fps=12,scale=480:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" play.gif` で作る |
 
 - 自動確認は確認用のファイルに記録・設定を保存し、遊んでいる人の記録・設定には触れない
 - 想定どおりに出るエラー表示: `checks.gd` は効果音が無いときの確認で12件の警告と、壊したステージの検証エラー1件。`checks_ui.gd` と `checks_select.gd` は壊れた設定・記録ファイルを読む確認で ConfigFile の parse error を1件ずつ

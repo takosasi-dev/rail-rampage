@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- ブラウザですぐ遊べるページ（GitHub Pages。Release の Web 版を `.github/workflows/pages.yml` で置く）
+- README の先頭に、走っているところの GIF・画面写真・30秒でわかる説明（絵は `tests/shoot_readme.mjs` で撮る）
+
 ## [0.1.0] - 2026-10-02
 
 最初の公開版。
