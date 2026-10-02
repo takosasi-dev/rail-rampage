@@ -1,0 +1,126 @@
+{
+  "id": "stage_09",
+  "name": "分岐の迷路",
+  "time_of_day": "noon",
+  "ground_y": 900,
+  "start_segment": "s0",
+  "star_thresholds": [19500, 33500],
+  "gold_threshold": 38000,
+  "challenges": [
+    {"type": "no_toggle", "value": 0},
+    {"type": "kind", "kind": "crate", "value": 15},
+    {"type": "combo", "value": 45}
+  ],
+  "segments": {
+    "s0": {"points": [[0, 600], [2800, 600]], "end": {"type": "junction", "id": "j0"}},
+    "s1": {"points": [[2800, 600], [3000, 500], [3450, 500], [3650, 600]], "end": {"type": "next", "segment": "s3"}},
+    "s2": {"points": [[2800, 600], [3000, 700], [3450, 700], [3650, 600]], "end": {"type": "next", "segment": "s3"}},
+    "s3": {"points": [[3650, 600], [3910, 600]], "end": {"type": "junction", "id": "j1"}},
+    "s4": {"points": [[3910, 600], [4110, 500], [4560, 500], [4760, 600]], "end": {"type": "next", "segment": "s6"}},
+    "s5": {"points": [[3910, 600], [4110, 700], [4560, 700], [4760, 600]], "end": {"type": "next", "segment": "s6"}},
+    "s6": {"points": [[4760, 600], [5020, 600]], "end": {"type": "junction", "id": "j2"}},
+    "s7": {"points": [[5020, 600], [5220, 500], [5670, 500], [5870, 600]], "end": {"type": "next", "segment": "s9"}},
+    "s8": {"points": [[5020, 600], [5220, 700], [5670, 700], [5870, 600]], "end": {"type": "next", "segment": "s9"}},
+    "s9": {"points": [[5870, 600], [8870, 600]], "end": {"type": "junction", "id": "j3"}},
+    "s10": {"points": [[8870, 600], [9070, 500], [9520, 500], [9720, 600]], "end": {"type": "next", "segment": "s12"}},
+    "s11": {"points": [[8870, 600], [9070, 700], [9520, 700], [9720, 600]], "end": {"type": "next", "segment": "s12"}},
+    "s12": {"points": [[9720, 600], [9980, 600]], "end": {"type": "junction", "id": "j4"}},
+    "s13": {"points": [[9980, 600], [10180, 500], [10630, 500], [10830, 600]], "end": {"type": "next", "segment": "s15"}},
+    "s14": {"points": [[9980, 600], [10180, 700], [10630, 700], [10830, 600]], "end": {"type": "next", "segment": "s15"}},
+    "s15": {"points": [[10830, 600], [11090, 600]], "end": {"type": "junction", "id": "j5"}},
+    "s16": {"points": [[11090, 600], [11290, 500], [11740, 500], [11940, 600]], "end": {"type": "next", "segment": "s18"}},
+    "s17": {"points": [[11090, 600], [11290, 700], [11740, 700], [11940, 600]], "end": {"type": "next", "segment": "s18"}},
+    "s18": {"points": [[11940, 600], [14940, 600]], "end": {"type": "goal"}}
+  },
+  "junctions": {
+    "j0": {"branches": ["s1", "s2"], "default": 1},
+    "j1": {"branches": ["s4", "s5"], "default": 0},
+    "j2": {"branches": ["s7", "s8"], "default": 1},
+    "j3": {"branches": ["s10", "s11"], "default": 1},
+    "j4": {"branches": ["s13", "s14"], "default": 0},
+    "j5": {"branches": ["s16", "s17"], "default": 1}
+  },
+  "objects": [
+    {"type": "crate", "segment": "s0", "offset": 600},
+    {"type": "barrel", "segment": "s0", "offset": 850},
+    {"type": "crate", "segment": "s0", "offset": 1100},
+    {"type": "barrel", "segment": "s0", "offset": 1350},
+    {"type": "crate", "segment": "s0", "offset": 1600},
+    {"type": "barrel", "segment": "s0", "offset": 1850},
+    {"type": "crate", "segment": "s0", "offset": 2100},
+    {"type": "barrel", "segment": "s0", "offset": 2350},
+
+    {"type": "dummy", "segment": "s1", "offset": 229},
+    {"type": "barrel", "segment": "s1", "offset": 389},
+    {"type": "dummy", "segment": "s1", "offset": 549},
+    {"type": "barrel", "segment": "s1", "offset": 709},
+
+    {"type": "crate", "segment": "s2", "offset": 229},
+
+    {"type": "crate", "segment": "s4", "offset": 229},
+
+    {"type": "dummy", "segment": "s5", "offset": 229},
+    {"type": "barrel", "segment": "s5", "offset": 389},
+    {"type": "dummy", "segment": "s5", "offset": 549},
+    {"type": "barrel", "segment": "s5", "offset": 709},
+
+    {"type": "dummy", "segment": "s7", "offset": 229},
+    {"type": "barrel", "segment": "s7", "offset": 389},
+    {"type": "dummy", "segment": "s7", "offset": 549},
+    {"type": "barrel", "segment": "s7", "offset": 709},
+
+    {"type": "crate", "segment": "s8", "offset": 229},
+
+    {"type": "barrel", "segment": "s9", "offset": 150},
+    {"type": "dummy", "segment": "s9", "offset": 370},
+    {"type": "barrel", "segment": "s9", "offset": 590},
+    {"type": "dummy", "segment": "s9", "offset": 810},
+    {"type": "barrel", "segment": "s9", "offset": 1030},
+    {"type": "dummy", "segment": "s9", "offset": 1250},
+    {"type": "barrel", "segment": "s9", "offset": 1470},
+    {"type": "dummy", "segment": "s9", "offset": 1690},
+    {"type": "barrel", "segment": "s9", "offset": 1910},
+    {"type": "dummy", "segment": "s9", "offset": 2130},
+    {"type": "barrel", "segment": "s9", "offset": 2350},
+    {"type": "dummy", "segment": "s9", "offset": 2570},
+
+    {"type": "wall", "segment": "s10", "offset": 240, "required_speed": 900},
+    {"type": "drum", "segment": "s10", "offset": 450},
+    {"type": "dummy", "segment": "s10", "offset": 535},
+    {"type": "drum", "segment": "s10", "offset": 620},
+    {"type": "dummy", "segment": "s10", "offset": 705},
+
+    {"type": "crate", "segment": "s11", "offset": 229},
+    {"type": "crate", "segment": "s11", "offset": 549},
+
+    {"type": "crate", "segment": "s13", "offset": 229},
+
+    {"type": "dummy", "segment": "s14", "offset": 229},
+    {"type": "barrel", "segment": "s14", "offset": 389},
+    {"type": "dummy", "segment": "s14", "offset": 549},
+    {"type": "barrel", "segment": "s14", "offset": 709},
+
+    {"type": "wall", "segment": "s16", "offset": 240, "required_speed": 1000},
+    {"type": "drum", "segment": "s16", "offset": 450},
+    {"type": "dummy", "segment": "s16", "offset": 535},
+    {"type": "drum", "segment": "s16", "offset": 620},
+    {"type": "dummy", "segment": "s16", "offset": 705},
+
+    {"type": "crate", "segment": "s17", "offset": 229},
+    {"type": "crate", "segment": "s17", "offset": 549},
+
+    {"type": "crate", "segment": "s18", "offset": 150},
+    {"type": "crate", "segment": "s18", "offset": 400},
+    {"type": "crate", "segment": "s18", "offset": 650},
+    {"type": "crate", "segment": "s18", "offset": 900},
+    {"type": "drum", "segment": "s18", "offset": 1300},
+    {"type": "crate", "segment": "s18", "offset": 1385},
+    {"type": "drum", "segment": "s18", "offset": 1470},
+    {"type": "crate", "segment": "s18", "offset": 1555},
+    {"type": "drum", "segment": "s18", "offset": 1640},
+    {"type": "crate", "segment": "s18", "offset": 1725},
+    {"type": "drum", "segment": "s18", "offset": 1810},
+    {"type": "crate", "segment": "s18", "offset": 1895},
+    {"type": "drum", "segment": "s18", "offset": 1980}
+  ]
+}

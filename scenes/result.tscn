@@ -1,0 +1,172 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/result.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/stamp.tscn" id="2"]
+
+[node name="Result" type="Control"]
+process_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Report" type="Control" parent="."]
+offset_left = 180.0
+offset_top = 56.0
+offset_right = 820.0
+offset_bottom = 688.0
+mouse_filter = 2
+
+[node name="Body" type="VBoxContainer" parent="Report"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 48.0
+offset_top = 40.0
+offset_right = -48.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 18
+
+[node name="Head" type="MarginContainer" parent="Report/Body"]
+unique_name_in_owner = true
+theme_override_constants/margin_bottom = 15
+
+[node name="HeadRow" type="HBoxContainer" parent="Report/Body/Head"]
+
+[node name="Heading" type="Label" parent="Report/Body/Head/HeadRow"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+text = "試験報告書"
+vertical_alignment = 2
+
+[node name="ReportNo" type="Label" parent="Report/Body/Head/HeadRow"]
+unique_name_in_owner = true
+size_flags_vertical = 8
+horizontal_alignment = 2
+
+[node name="Grid" type="GridContainer" parent="Report/Body"]
+unique_name_in_owner = true
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 12
+columns = 2
+
+[node name="Spacer" type="Control" parent="Report/Body"]
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Rating" type="MarginContainer" parent="Report/Body"]
+unique_name_in_owner = true
+theme_override_constants/margin_top = 18
+
+[node name="RatingBody" type="VBoxContainer" parent="Report/Body/Rating"]
+theme_override_constants/separation = 8
+
+[node name="RatingLabel" type="Label" parent="Report/Body/Rating/RatingBody"]
+unique_name_in_owner = true
+text = "評価"
+
+[node name="RatingRow" type="HBoxContainer" parent="Report/Body/Rating/RatingBody"]
+theme_override_constants/separation = 22
+
+[node name="Stars" type="Control" parent="Report/Body/Rating/RatingBody/RatingRow"]
+unique_name_in_owner = true
+mouse_filter = 2
+
+[node name="Remain" type="HBoxContainer" parent="Report/Body/Rating/RatingBody/RatingRow"]
+unique_name_in_owner = true
+theme_override_constants/separation = 0
+
+[node name="RemainHead" type="Label" parent="Report/Body/Rating/RatingBody/RatingRow/Remain"]
+unique_name_in_owner = true
+vertical_alignment = 1
+
+[node name="RemainPoints" type="Label" parent="Report/Body/Rating/RatingBody/RatingRow/Remain"]
+unique_name_in_owner = true
+vertical_alignment = 1
+
+[node name="RemainTail" type="Label" parent="Report/Body/Rating/RatingBody/RatingRow/Remain"]
+unique_name_in_owner = true
+text = " 点"
+vertical_alignment = 1
+
+[node name="Hint" type="PanelContainer" parent="Report/Body"]
+unique_name_in_owner = true
+
+[node name="HintRow" type="HBoxContainer" parent="Report/Body/Hint"]
+theme_override_constants/separation = 14
+
+[node name="HintIcon" type="Control" parent="Report/Body/Hint/HintRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 28)
+size_flags_vertical = 0
+mouse_filter = 2
+
+[node name="HintText" type="Label" parent="Report/Body/Hint/HintRow"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+autowrap_mode = 3
+
+[node name="Stamp" parent="Report" instance=ExtResource("2")]
+unique_name_in_owner = true
+
+[node name="NewStamps" type="MarginContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+offset_left = 880.0
+offset_top = 56.0
+offset_right = 1180.0
+offset_bottom = 56.0
+mouse_filter = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 26
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 14
+
+[node name="NewBody" type="VBoxContainer" parent="NewStamps"]
+theme_override_constants/separation = 8
+
+[node name="TrolleyHead" type="MarginContainer" parent="NewStamps/NewBody"]
+unique_name_in_owner = true
+theme_override_constants/margin_bottom = 8
+
+[node name="TrolleyHeading" type="Label" parent="NewStamps/NewBody/TrolleyHead"]
+unique_name_in_owner = true
+text = "新しい車両"
+
+[node name="TrolleyList" type="VBoxContainer" parent="NewStamps/NewBody"]
+unique_name_in_owner = true
+theme_override_constants/separation = 6
+
+[node name="TrolleyNote" type="MarginContainer" parent="NewStamps/NewBody"]
+unique_name_in_owner = true
+theme_override_constants/margin_bottom = 10
+
+[node name="TrolleyNoteText" type="Label" parent="NewStamps/NewBody/TrolleyNote"]
+unique_name_in_owner = true
+text = "「車両を選ぶ」から使えます"
+
+[node name="NewHead" type="MarginContainer" parent="NewStamps/NewBody"]
+unique_name_in_owner = true
+theme_override_constants/margin_bottom = 8
+
+[node name="NewHeading" type="Label" parent="NewStamps/NewBody/NewHead"]
+unique_name_in_owner = true
+text = "新しい検定印"
+
+[node name="NewList" type="VBoxContainer" parent="NewStamps/NewBody"]
+unique_name_in_owner = true
+theme_override_constants/separation = 6
+
+[node name="NewMore" type="Label" parent="NewStamps/NewBody"]
+unique_name_in_owner = true
+
+[node name="Buttons" type="VBoxContainer" parent="."]
+offset_left = 880.0
+offset_top = 330.0
+offset_right = 1180.0
+offset_bottom = 330.0
+theme_override_constants/separation = 12

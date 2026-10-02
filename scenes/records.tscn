@@ -1,0 +1,307 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/records.gd" id="1"]
+[ext_resource type="Script" path="res://scenes/ui/ui_button.gd" id="2"]
+
+[node name="Records" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Header" type="Control" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 96.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="Head" type="HBoxContainer" parent="Header"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 64.0
+offset_right = 640.0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 20
+
+[node name="Heading" type="Label" parent="Header/Head"]
+unique_name_in_owner = true
+size_flags_vertical = 8
+text = "試験記録"
+
+[node name="Sub" type="Label" parent="Header/Head"]
+unique_name_in_owner = true
+size_flags_vertical = 8
+text = "RECORDS"
+
+[node name="CountRow" type="HBoxContainer" parent="Header"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -464.0
+offset_right = -64.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="CountLabel" type="Label" parent="Header/CountRow"]
+unique_name_in_owner = true
+size_flags_vertical = 4
+text = "検定印"
+
+[node name="Count" type="Label" parent="Header/CountRow"]
+unique_name_in_owner = true
+size_flags_vertical = 4
+
+[node name="Stats" type="Control" parent="."]
+offset_left = 64.0
+offset_top = 132.0
+offset_right = 504.0
+offset_bottom = 536.0
+mouse_filter = 2
+
+[node name="Body" type="VBoxContainer" parent="Stats"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 18.0
+offset_right = -24.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="Table" type="GridContainer" parent="Stats/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 20
+columns = 2
+
+[node name="RunsLabel" type="Label" parent="Stats/Body/Table"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "走った回数"
+
+[node name="Runs" type="Label" parent="Stats/Body/Table"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+horizontal_alignment = 2
+
+[node name="ResultsLabel" type="Label" parent="Stats/Body/Table"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "合格／激突／脱線"
+
+[node name="Results" type="Label" parent="Stats/Body/Table"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+horizontal_alignment = 2
+
+[node name="GirigiriLabel" type="Label" parent="Stats/Body/Table"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "ギリギリ突破"
+
+[node name="Girigiri" type="Label" parent="Stats/Body/Table"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+horizontal_alignment = 2
+
+[node name="SpeedLabel" type="Label" parent="Stats/Body/Table"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "最高速度"
+
+[node name="Speed" type="Label" parent="Stats/Body/Table"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+horizontal_alignment = 2
+
+[node name="ComboLabel" type="Label" parent="Stats/Body/Table"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "最大コンボ"
+
+[node name="Combo" type="Label" parent="Stats/Body/Table"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+horizontal_alignment = 2
+
+[node name="DistanceLabel" type="Label" parent="Stats/Body/Table"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "走った距離"
+
+[node name="Distance" type="Label" parent="Stats/Body/Table"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+horizontal_alignment = 2
+
+[node name="SmashedLabel" type="Label" parent="Stats/Body/Table"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "壊した標的"
+
+[node name="Smashed" type="Label" parent="Stats/Body/Table"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+horizontal_alignment = 2
+
+[node name="Targets" type="HBoxContainer" parent="Stats/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="Target" type="VBoxContainer" parent="Stats/Body/Targets"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Icon" type="Control" parent="Stats/Body/Targets/Target"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+
+[node name="Count" type="Label" parent="Stats/Body/Targets/Target"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Stamps" type="GridContainer" parent="."]
+unique_name_in_owner = true
+offset_left = 536.0
+offset_top = 132.0
+offset_right = 1216.0
+offset_bottom = 504.0
+mouse_filter = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 8
+columns = 8
+
+[node name="Cell" type="Control" parent="Stamps"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 2
+
+[node name="Detail" type="Control" parent="."]
+offset_left = 536.0
+offset_top = 516.0
+offset_right = 1216.0
+offset_bottom = 608.0
+mouse_filter = 2
+
+[node name="Info" type="VBoxContainer" parent="Detail"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 8.0
+offset_right = -24.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Head" type="HBoxContainer" parent="Detail/Info"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="DetailNum" type="Label" parent="Detail/Info/Head"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="DetailName" type="Label" parent="Detail/Info/Head"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+
+[node name="Date" type="Label" parent="Detail/Info/Head"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="Desc" type="HBoxContainer" parent="Detail/Info"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 17
+
+[node name="ConditionLabel" type="Label" parent="Detail/Info/Desc"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "条件"
+
+[node name="Condition" type="Label" parent="Detail/Info/Desc"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Cert" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 64.0
+offset_top = 556.0
+offset_right = 264.0
+offset_bottom = 608.0
+text = "修了証書"
+script = ExtResource("2")
+on_ink = false
+
+[node name="CertHint" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 284.0
+offset_top = 556.0
+offset_right = 504.0
+offset_bottom = 608.0
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Back" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 64.0
+offset_top = 632.0
+offset_right = 64.0
+offset_bottom = 684.0
+text = "戻る"
+script = ExtResource("2")
+on_ink = false
+key_hint = "Esc"
+
+[node name="Help" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 616.0
+offset_top = 632.0
+offset_right = 1216.0
+offset_bottom = 684.0
+text = "↑↓←→ 選択　　SPACE / クリック 決定　　Esc 戻る"
+horizontal_alignment = 2
+vertical_alignment = 1

@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/objects/trolley.gd" id="1"]
+
+[node name="Trolley" type="PathFollow2D"]
+loop = false
+script = ExtResource("1")
+
+[node name="HitArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitArea"]
+
+[node name="Visual" type="Node2D" parent="."]

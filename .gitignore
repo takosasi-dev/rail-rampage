@@ -1,0 +1,18 @@
+# Godot 4
+.godot/
+/android/
+
+# Godot 本体（python tools/setup_godot.py で用意する）
+tools/godot/
+
+# 書き出し成果物（配布は GitHub Release に添付する）
+build/*
+!build/.gdignore
+*.exe
+*.pck
+*.zip
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -1,0 +1,401 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/settings.gd" id="1"]
+[ext_resource type="Script" path="res://scenes/ui/ui_button.gd" id="2"]
+
+[node name="Settings" type="Control"]
+process_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Panel" type="MarginContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_right = 380.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 46
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 36
+
+[node name="Body" type="VBoxContainer" parent="Panel"]
+theme_override_constants/separation = 22
+
+[node name="Head" type="HBoxContainer" parent="Panel/Body"]
+theme_override_constants/separation = 16
+
+[node name="Heading" type="Label" parent="Panel/Body/Head"]
+unique_name_in_owner = true
+size_flags_vertical = 8
+text = "設定"
+vertical_alignment = 2
+
+[node name="Sub" type="Label" parent="Panel/Body/Head"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+size_flags_vertical = 8
+text = "SETTINGS"
+
+[node name="Tabs" type="HBoxContainer" parent="Panel/Body/Head"]
+theme_override_constants/separation = 10
+
+[node name="TabGame" type="Button" parent="Panel/Body/Head/Tabs"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+text = "ゲーム"
+script = ExtResource("2")
+on_ink = false
+
+[node name="TabDisplay" type="Button" parent="Panel/Body/Head/Tabs"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+text = "画面"
+script = ExtResource("2")
+on_ink = false
+
+[node name="Pages" type="MarginContainer" parent="Panel/Body"]
+unique_name_in_owner = true
+
+[node name="Grid" type="GridContainer" parent="Panel/Body/Pages"]
+unique_name_in_owner = true
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 12
+columns = 2
+
+[node name="VolumeLabel" type="Label" parent="Panel/Body/Pages/Grid"]
+custom_minimum_size = Vector2(180, 0)
+text = "効果音の音量"
+vertical_alignment = 1
+
+[node name="VolumeRow" type="HBoxContainer" parent="Panel/Body/Pages/Grid"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="Volume" type="HSlider" parent="Panel/Body/Pages/Grid/VolumeRow"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="VolumeValue" type="Label" parent="Panel/Body/Pages/Grid/VolumeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ShakeLabel" type="Label" parent="Panel/Body/Pages/Grid"]
+text = "画面の揺れ"
+vertical_alignment = 1
+
+[node name="ShakeRow" type="HBoxContainer" parent="Panel/Body/Pages/Grid"]
+theme_override_constants/separation = 0
+
+[node name="ShakeOn" type="Button" parent="Panel/Body/Pages/Grid/ShakeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "ON"
+script = ExtResource("2")
+on_ink = false
+
+[node name="ShakeOff" type="Button" parent="Panel/Body/Pages/Grid/ShakeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "OFF"
+script = ExtResource("2")
+on_ink = false
+
+[node name="TimeLabel" type="Label" parent="Panel/Body/Pages/Grid"]
+text = "時間帯"
+vertical_alignment = 1
+
+[node name="TimeRow" type="HBoxContainer" parent="Panel/Body/Pages/Grid"]
+theme_override_constants/separation = 0
+
+[node name="TimeSequence" type="Button" parent="Panel/Body/Pages/Grid/TimeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+text = "順に進む"
+script = ExtResource("2")
+on_ink = false
+
+[node name="TimeStage" type="Button" parent="Panel/Body/Pages/Grid/TimeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+text = "見どころに合わせる"
+script = ExtResource("2")
+on_ink = false
+
+[node name="GhostLabel" type="Label" parent="Panel/Body/Pages/Grid"]
+text = "ゴースト"
+vertical_alignment = 1
+
+[node name="GhostRow" type="HBoxContainer" parent="Panel/Body/Pages/Grid"]
+unique_name_in_owner = true
+theme_override_constants/separation = 0
+
+[node name="GhostOn" type="Button" parent="Panel/Body/Pages/Grid/GhostRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+text = "表示"
+script = ExtResource("2")
+on_ink = false
+
+[node name="GhostOff" type="Button" parent="Panel/Body/Pages/Grid/GhostRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+text = "非表示"
+script = ExtResource("2")
+on_ink = false
+
+[node name="KeysLabel" type="Label" parent="Panel/Body/Pages/Grid"]
+text = "操作"
+vertical_alignment = 1
+
+[node name="Keys" type="GridContainer" parent="Panel/Body/Pages/Grid"]
+unique_name_in_owner = true
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="Key1" type="Label" parent="Panel/Body/Pages/Grid/Keys"]
+custom_minimum_size = Vector2(160, 0)
+text = "SPACE / クリック"
+
+[node name="Desc1" type="Label" parent="Panel/Body/Pages/Grid/Keys"]
+text = "分岐の切り替え・決定"
+
+[node name="Key2" type="Label" parent="Panel/Body/Pages/Grid/Keys"]
+text = "R"
+
+[node name="Desc2" type="Label" parent="Panel/Body/Pages/Grid/Keys"]
+text = "リトライ"
+
+[node name="Key3" type="Label" parent="Panel/Body/Pages/Grid/Keys"]
+text = "Esc / P"
+
+[node name="Desc3" type="Label" parent="Panel/Body/Pages/Grid/Keys"]
+text = "ポーズ・戻る"
+
+[node name="Key4" type="Label" parent="Panel/Body/Pages/Grid/Keys"]
+text = "F11"
+
+[node name="Desc4" type="Label" parent="Panel/Body/Pages/Grid/Keys"]
+text = "全画面の切り替え"
+
+[node name="RecordLabel" type="Label" parent="Panel/Body/Pages/Grid"]
+text = "記録"
+vertical_alignment = 1
+
+[node name="Record" type="VBoxContainer" parent="Panel/Body/Pages/Grid"]
+
+[node name="Erase" type="Button" parent="Panel/Body/Pages/Grid/Record"]
+unique_name_in_owner = true
+size_flags_horizontal = 0
+text = "記録を消去する…"
+script = ExtResource("2")
+on_ink = false
+
+[node name="Confirm" type="PanelContainer" parent="Panel/Body/Pages/Grid/Record"]
+unique_name_in_owner = true
+visible = false
+size_flags_horizontal = 0
+
+[node name="ConfirmBody" type="VBoxContainer" parent="Panel/Body/Pages/Grid/Record/Confirm"]
+theme_override_constants/separation = 10
+
+[node name="ConfirmText" type="Label" parent="Panel/Body/Pages/Grid/Record/Confirm/ConfirmBody"]
+unique_name_in_owner = true
+text = "全ステージの記録と★を消去します。元に戻せません。"
+
+[node name="ConfirmButtons" type="HBoxContainer" parent="Panel/Body/Pages/Grid/Record/Confirm/ConfirmBody"]
+theme_override_constants/separation = 10
+
+[node name="Cancel" type="Button" parent="Panel/Body/Pages/Grid/Record/Confirm/ConfirmBody/ConfirmButtons"]
+unique_name_in_owner = true
+text = "やめる"
+script = ExtResource("2")
+on_ink = false
+
+[node name="EraseYes" type="Button" parent="Panel/Body/Pages/Grid/Record/Confirm/ConfirmBody/ConfirmButtons"]
+unique_name_in_owner = true
+text = "消去する"
+script = ExtResource("2")
+on_ink = false
+
+[node name="DisplayGrid" type="GridContainer" parent="Panel/Body/Pages"]
+unique_name_in_owner = true
+visible = false
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 12
+columns = 2
+
+[node name="QualityLabel" type="Label" parent="Panel/Body/Pages/DisplayGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 0)
+size_flags_vertical = 0
+text = "画質"
+vertical_alignment = 1
+
+[node name="QualityBox" type="VBoxContainer" parent="Panel/Body/Pages/DisplayGrid"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="QualityRow" type="HBoxContainer" parent="Panel/Body/Pages/DisplayGrid/QualityBox"]
+unique_name_in_owner = true
+theme_override_constants/separation = 0
+
+[node name="QualityHigh" type="Button" parent="Panel/Body/Pages/DisplayGrid/QualityBox/QualityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "高"
+script = ExtResource("2")
+on_ink = false
+
+[node name="QualityMedium" type="Button" parent="Panel/Body/Pages/DisplayGrid/QualityBox/QualityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "中"
+script = ExtResource("2")
+on_ink = false
+
+[node name="QualityLow" type="Button" parent="Panel/Body/Pages/DisplayGrid/QualityBox/QualityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "低"
+script = ExtResource("2")
+on_ink = false
+
+[node name="QualityNote" type="Label" parent="Panel/Body/Pages/DisplayGrid/QualityBox"]
+unique_name_in_owner = true
+text = "次に始める試験から変わります（リトライを含む）"
+
+[node name="FpsLabel" type="Label" parent="Panel/Body/Pages/DisplayGrid"]
+text = "FPS 上限"
+vertical_alignment = 1
+
+[node name="FpsRow" type="HBoxContainer" parent="Panel/Body/Pages/DisplayGrid"]
+unique_name_in_owner = true
+theme_override_constants/separation = 0
+
+[node name="Fps30" type="Button" parent="Panel/Body/Pages/DisplayGrid/FpsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "30"
+script = ExtResource("2")
+on_ink = false
+
+[node name="Fps60" type="Button" parent="Panel/Body/Pages/DisplayGrid/FpsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "60"
+script = ExtResource("2")
+on_ink = false
+
+[node name="Fps120" type="Button" parent="Panel/Body/Pages/DisplayGrid/FpsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "120"
+script = ExtResource("2")
+on_ink = false
+
+[node name="FpsNone" type="Button" parent="Panel/Body/Pages/DisplayGrid/FpsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "上限なし"
+script = ExtResource("2")
+on_ink = false
+
+[node name="VsyncLabel" type="Label" parent="Panel/Body/Pages/DisplayGrid"]
+text = "垂直同期"
+vertical_alignment = 1
+
+[node name="VsyncRow" type="HBoxContainer" parent="Panel/Body/Pages/DisplayGrid"]
+unique_name_in_owner = true
+theme_override_constants/separation = 0
+
+[node name="VsyncOn" type="Button" parent="Panel/Body/Pages/DisplayGrid/VsyncRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "ON"
+script = ExtResource("2")
+on_ink = false
+
+[node name="VsyncOff" type="Button" parent="Panel/Body/Pages/DisplayGrid/VsyncRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "OFF"
+script = ExtResource("2")
+on_ink = false
+
+[node name="WindowLabel" type="Label" parent="Panel/Body/Pages/DisplayGrid"]
+text = "表示"
+vertical_alignment = 1
+
+[node name="WindowRow" type="HBoxContainer" parent="Panel/Body/Pages/DisplayGrid"]
+unique_name_in_owner = true
+theme_override_constants/separation = 0
+
+[node name="Windowed" type="Button" parent="Panel/Body/Pages/DisplayGrid/WindowRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "窓"
+script = ExtResource("2")
+on_ink = false
+
+[node name="Fullscreen" type="Button" parent="Panel/Body/Pages/DisplayGrid/WindowRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "全画面"
+script = ExtResource("2")
+on_ink = false
+
+[node name="ShowFpsLabel" type="Label" parent="Panel/Body/Pages/DisplayGrid"]
+text = "FPS 表示"
+vertical_alignment = 1
+
+[node name="ShowFpsRow" type="HBoxContainer" parent="Panel/Body/Pages/DisplayGrid"]
+unique_name_in_owner = true
+theme_override_constants/separation = 0
+
+[node name="ShowFpsOn" type="Button" parent="Panel/Body/Pages/DisplayGrid/ShowFpsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "ON"
+script = ExtResource("2")
+on_ink = false
+
+[node name="ShowFpsOff" type="Button" parent="Panel/Body/Pages/DisplayGrid/ShowFpsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+text = "OFF"
+script = ExtResource("2")
+on_ink = false
+
+[node name="Footer" type="MarginContainer" parent="Panel/Body"]
+unique_name_in_owner = true
+theme_override_constants/margin_top = 20
+
+[node name="FooterRow" type="HBoxContainer" parent="Panel/Body/Footer"]
+
+[node name="Back" type="Button" parent="Panel/Body/Footer/FooterRow"]
+unique_name_in_owner = true
+text = "戻る"
+script = ExtResource("2")
+primary = true
+on_ink = false
+key_hint = "Esc"
+
+[node name="Note" type="Label" parent="Panel/Body/Footer/FooterRow"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+text = "変更は即時に保存されます"
+horizontal_alignment = 2
+vertical_alignment = 1

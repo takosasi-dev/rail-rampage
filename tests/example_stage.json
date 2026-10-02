@@ -1,0 +1,21 @@
+{
+  "id": "stage_01",
+  "name": "はじめての分岐",
+  "ground_y": 900,
+  "start_segment": "s0",
+  "star_thresholds": [1500, 3000],
+  "segments": {
+    "s0": { "points": [[0, 600], [1800, 600]], "end": { "type": "junction", "id": "j0" } },
+    "s1": { "points": [[1800, 600], [2200, 450], [3600, 450], [4000, 600]], "end": { "type": "next", "segment": "s3" } },
+    "s2": { "points": [[1800, 600], [2200, 750], [3600, 750], [4000, 600]], "end": { "type": "next", "segment": "s3" } },
+    "s3": { "points": [[4000, 600], [6000, 600]], "end": { "type": "goal" } }
+  },
+  "junctions": {
+    "j0": { "branches": ["s1", "s2"], "default": 0 }
+  },
+  "objects": [
+    { "type": "crate", "segment": "s1", "offset": 600 },
+    { "type": "crate", "segment": "s1", "offset": 900 },
+    { "type": "crate", "segment": "s2", "offset": 800 }
+  ]
+}

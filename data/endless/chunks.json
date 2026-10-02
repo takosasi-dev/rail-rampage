@@ -1,0 +1,412 @@
+{
+  "_about": "無限軌道の区間の型（replay-value-design.md 7章）。座標は入口のレールを (0, 0) にした相対の値で、入口と出口のレールの高さはどれも 0。end の type は next・junction・exit（次の区間の入口へつなぐ）。junction の pick は自動操縦と必要速度の見積もりが通る出口（壁・ジャンプはこの道にだけ置く。もう一方は失敗要素の無い迂回、L-4）。objects の level はその段から置く標的（進むほど密になる）。wall・jump の required_speed は段0の値で、段ごとに ENDLESS_REQUIRED_STEP を足し、届く値で頭打ちにする。blast の壁は手前のドラム缶の爆発で崩れる。判断材料（各出口の最初の標的・標識）は分岐の直後に置く（L-3）",
+  "chunks": [
+    {
+      "id": "start", "start": true, "weight": 0, "min_level": 0,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [2200, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {},
+      "objects": [
+        {"type": "crate", "segment": "a", "offset": 1000},
+        {"type": "crate", "segment": "a", "offset": 1350},
+        {"type": "barrel", "segment": "a", "offset": 1750}
+      ]
+    },
+    {
+      "id": "fork_dummies", "weight": 3, "min_level": 0,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1400, 0]], "end": {"type": "junction", "id": "j"}},
+        "u": {"points": [[1400, 0], [1600, -100], [4200, -100], [4400, 0]], "end": {"type": "next", "segment": "z"}},
+        "d": {"points": [[1400, 0], [1600, 100], [4200, 100], [4400, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[4400, 0], [5000, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {"j": {"branches": ["u", "d"], "default": 1, "pick": 0}},
+      "objects": [
+        {"type": "crate", "segment": "a", "offset": 500},
+        {"type": "crate", "segment": "a", "offset": 800},
+        {"type": "barrel", "segment": "a", "offset": 1100},
+        {"type": "crate", "segment": "a", "offset": 650, "level": 2},
+        {"type": "dummy", "segment": "u", "offset": 229},
+        {"type": "dummy", "segment": "u", "offset": 479},
+        {"type": "dummy", "segment": "u", "offset": 729},
+        {"type": "dummy", "segment": "u", "offset": 979},
+        {"type": "dummy", "segment": "u", "offset": 1229},
+        {"type": "dummy", "segment": "u", "offset": 1479},
+        {"type": "dummy", "segment": "u", "offset": 1729},
+        {"type": "dummy", "segment": "u", "offset": 1979},
+        {"type": "dummy", "segment": "u", "offset": 2229},
+        {"type": "dummy", "segment": "u", "offset": 2479, "level": 1},
+        {"type": "dummy", "segment": "u", "offset": 2729, "level": 3},
+        {"type": "barrel", "segment": "d", "offset": 229},
+        {"type": "barrel", "segment": "d", "offset": 1500},
+        {"type": "barrel", "segment": "d", "offset": 2700},
+        {"type": "crate", "segment": "z", "offset": 300, "level": 4}
+      ]
+    },
+    {
+      "id": "fork_drums", "weight": 3, "min_level": 0,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1400, 0]], "end": {"type": "junction", "id": "j"}},
+        "u": {"points": [[1400, 0], [1600, -100], [4200, -100], [4400, 0]], "end": {"type": "next", "segment": "z"}},
+        "d": {"points": [[1400, 0], [1600, 100], [4200, 100], [4400, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[4400, 0], [5000, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {"j": {"branches": ["u", "d"], "default": 1, "pick": 0}},
+      "objects": [
+        {"type": "crate", "segment": "a", "offset": 600},
+        {"type": "crate", "segment": "a", "offset": 900},
+        {"type": "barrel", "segment": "a", "offset": 1200},
+        {"type": "drum", "segment": "u", "offset": 229},
+        {"type": "crate", "segment": "u", "offset": 314},
+        {"type": "drum", "segment": "u", "offset": 399},
+        {"type": "crate", "segment": "u", "offset": 484},
+        {"type": "drum", "segment": "u", "offset": 569},
+        {"type": "crate", "segment": "u", "offset": 654},
+        {"type": "drum", "segment": "u", "offset": 739},
+        {"type": "dummy", "segment": "u", "offset": 1100},
+        {"type": "dummy", "segment": "u", "offset": 1400},
+        {"type": "dummy", "segment": "u", "offset": 1700},
+        {"type": "dummy", "segment": "u", "offset": 2000},
+        {"type": "dummy", "segment": "u", "offset": 2300, "level": 1},
+        {"type": "dummy", "segment": "u", "offset": 2600, "level": 3},
+        {"type": "crate", "segment": "d", "offset": 229},
+        {"type": "crate", "segment": "d", "offset": 1400},
+        {"type": "crate", "segment": "d", "offset": 2600},
+        {"type": "barrel", "segment": "d", "offset": 2000, "level": 2}
+      ]
+    },
+    {
+      "id": "wall_or_detour", "weight": 3, "min_level": 0,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1800, 0]], "end": {"type": "junction", "id": "j"}},
+        "u": {"points": [[1800, 0], [2000, -100], [4600, -100], [4800, 0]], "end": {"type": "next", "segment": "z"}},
+        "d": {"points": [[1800, 0], [2000, 100], [4600, 100], [4800, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[4800, 0], [5400, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {"j": {"branches": ["u", "d"], "default": 1, "pick": 0}},
+      "objects": [
+        {"type": "dummy", "segment": "a", "offset": 300},
+        {"type": "dummy", "segment": "a", "offset": 550},
+        {"type": "drum", "segment": "a", "offset": 800},
+        {"type": "crate", "segment": "a", "offset": 885},
+        {"type": "dummy", "segment": "a", "offset": 1100},
+        {"type": "barrel", "segment": "a", "offset": 1350},
+        {"type": "dummy", "segment": "a", "offset": 1550},
+        {"type": "wall", "segment": "u", "offset": 264, "required_speed": 750},
+        {"type": "dummy", "segment": "u", "offset": 600},
+        {"type": "dummy", "segment": "u", "offset": 850},
+        {"type": "dummy", "segment": "u", "offset": 1100},
+        {"type": "dummy", "segment": "u", "offset": 1350},
+        {"type": "dummy", "segment": "u", "offset": 1600},
+        {"type": "dummy", "segment": "u", "offset": 1850},
+        {"type": "drum", "segment": "u", "offset": 2100},
+        {"type": "crate", "segment": "u", "offset": 2185},
+        {"type": "drum", "segment": "u", "offset": 2270},
+        {"type": "dummy", "segment": "u", "offset": 2500, "level": 2},
+        {"type": "dummy", "segment": "u", "offset": 2750, "level": 4},
+        {"type": "crate", "segment": "d", "offset": 229},
+        {"type": "crate", "segment": "d", "offset": 1500},
+        {"type": "crate", "segment": "d", "offset": 2700}
+      ]
+    },
+    {
+      "id": "jump_or_detour", "weight": 3, "min_level": 0,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1800, 0]], "end": {"type": "junction", "id": "j"}},
+        "u": {"points": [[1800, 0], [2000, -100], [2050, -100]], "end": {"type": "next", "segment": "uj"}},
+        "uj": {"points": [[2050, -100], [2150, -137], [2250, -167], [2350, -190], [2450, -207], [2550, -217], [2650, -220], [2750, -217], [2850, -207], [2950, -190], [3050, -167], [3150, -137], [3250, -100]], "jump": {"required_speed": 800}, "end": {"type": "next", "segment": "ul"}},
+        "ul": {"points": [[3250, -100], [4800, -100], [5000, 0]], "end": {"type": "next", "segment": "z"}},
+        "d": {"points": [[1800, 0], [2000, 100], [4800, 100], [5000, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[5000, 0], [5600, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {"j": {"branches": ["u", "d"], "default": 1, "pick": 0}},
+      "objects": [
+        {"type": "dummy", "segment": "a", "offset": 300},
+        {"type": "dummy", "segment": "a", "offset": 550},
+        {"type": "drum", "segment": "a", "offset": 800},
+        {"type": "crate", "segment": "a", "offset": 885},
+        {"type": "dummy", "segment": "a", "offset": 1100},
+        {"type": "barrel", "segment": "a", "offset": 1350},
+        {"type": "dummy", "segment": "a", "offset": 1550},
+        {"type": "crate", "segment": "u", "offset": 229},
+        {"type": "dummy", "segment": "ul", "offset": 150},
+        {"type": "barrel", "segment": "ul", "offset": 310},
+        {"type": "dummy", "segment": "ul", "offset": 470},
+        {"type": "barrel", "segment": "ul", "offset": 630},
+        {"type": "dummy", "segment": "ul", "offset": 790},
+        {"type": "barrel", "segment": "ul", "offset": 950},
+        {"type": "dummy", "segment": "ul", "offset": 1110},
+        {"type": "barrel", "segment": "ul", "offset": 1270, "level": 1},
+        {"type": "dummy", "segment": "ul", "offset": 1430, "level": 3},
+        {"type": "crate", "segment": "d", "offset": 229},
+        {"type": "crate", "segment": "d", "offset": 1500},
+        {"type": "crate", "segment": "d", "offset": 2700}
+      ]
+    },
+    {
+      "id": "blast_wall", "weight": 2, "min_level": 1,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1400, 0]], "end": {"type": "junction", "id": "j"}},
+        "u": {"points": [[1400, 0], [1600, -100], [4200, -100], [4400, 0]], "end": {"type": "next", "segment": "z"}},
+        "d": {"points": [[1400, 0], [1600, 100], [4200, 100], [4400, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[4400, 0], [5000, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {"j": {"branches": ["u", "d"], "default": 1, "pick": 0}},
+      "objects": [
+        {"type": "crate", "segment": "a", "offset": 500},
+        {"type": "barrel", "segment": "a", "offset": 900},
+        {"type": "crate", "segment": "a", "offset": 1200},
+        {"type": "drum", "segment": "u", "offset": 130},
+        {"type": "wall", "segment": "u", "offset": 250, "required_speed": 1050, "blast": true},
+        {"type": "dummy", "segment": "u", "offset": 600},
+        {"type": "dummy", "segment": "u", "offset": 850},
+        {"type": "dummy", "segment": "u", "offset": 1100},
+        {"type": "dummy", "segment": "u", "offset": 1350},
+        {"type": "dummy", "segment": "u", "offset": 1600},
+        {"type": "dummy", "segment": "u", "offset": 1850},
+        {"type": "dummy", "segment": "u", "offset": 2100},
+        {"type": "drum", "segment": "u", "offset": 2400, "level": 2},
+        {"type": "crate", "segment": "u", "offset": 2485, "level": 2},
+        {"type": "drum", "segment": "u", "offset": 2570, "level": 2},
+        {"type": "crate", "segment": "d", "offset": 229},
+        {"type": "crate", "segment": "d", "offset": 1500},
+        {"type": "crate", "segment": "d", "offset": 2700}
+      ]
+    },
+    {
+      "id": "wall_low_rich", "weight": 3, "min_level": 0,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1800, 0]], "end": {"type": "junction", "id": "j"}},
+        "u": {"points": [[1800, 0], [2000, -100], [4600, -100], [4800, 0]], "end": {"type": "next", "segment": "z"}},
+        "d": {"points": [[1800, 0], [2000, 100], [4600, 100], [4800, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[4800, 0], [5400, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {"j": {"branches": ["u", "d"], "default": 0, "pick": 1}},
+      "objects": [
+        {"type": "dummy", "segment": "a", "offset": 300},
+        {"type": "drum", "segment": "a", "offset": 550},
+        {"type": "crate", "segment": "a", "offset": 635},
+        {"type": "drum", "segment": "a", "offset": 720},
+        {"type": "dummy", "segment": "a", "offset": 1000},
+        {"type": "dummy", "segment": "a", "offset": 1250},
+        {"type": "barrel", "segment": "a", "offset": 1500},
+        {"type": "crate", "segment": "u", "offset": 229},
+        {"type": "crate", "segment": "u", "offset": 1500},
+        {"type": "crate", "segment": "u", "offset": 2700},
+        {"type": "wall", "segment": "d", "offset": 264, "required_speed": 750},
+        {"type": "drum", "segment": "d", "offset": 650},
+        {"type": "dummy", "segment": "d", "offset": 735},
+        {"type": "drum", "segment": "d", "offset": 820},
+        {"type": "dummy", "segment": "d", "offset": 905},
+        {"type": "drum", "segment": "d", "offset": 990},
+        {"type": "barrel", "segment": "d", "offset": 1300},
+        {"type": "barrel", "segment": "d", "offset": 1550},
+        {"type": "barrel", "segment": "d", "offset": 1800},
+        {"type": "barrel", "segment": "d", "offset": 2050, "level": 1},
+        {"type": "barrel", "segment": "d", "offset": 2300, "level": 3}
+      ]
+    },
+    {
+      "id": "breather", "weight": 2, "min_level": 0,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [3200, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {},
+      "objects": [
+        {"type": "crate", "segment": "a", "offset": 400},
+        {"type": "crate", "segment": "a", "offset": 600},
+        {"type": "barrel", "segment": "a", "offset": 900},
+        {"type": "dummy", "segment": "a", "offset": 1200},
+        {"type": "crate", "segment": "a", "offset": 1500},
+        {"type": "barrel", "segment": "a", "offset": 1800},
+        {"type": "dummy", "segment": "a", "offset": 2100},
+        {"type": "crate", "segment": "a", "offset": 2400},
+        {"type": "barrel", "segment": "a", "offset": 2700},
+        {"type": "dummy", "segment": "a", "offset": 1350, "level": 1},
+        {"type": "dummy", "segment": "a", "offset": 2250, "level": 2},
+        {"type": "drum", "segment": "a", "offset": 3000, "level": 3}
+      ]
+    },
+    {
+      "id": "jump_drums", "weight": 2, "min_level": 1,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1800, 0]], "end": {"type": "junction", "id": "j"}},
+        "u": {"points": [[1800, 0], [2000, -100], [2050, -100]], "end": {"type": "next", "segment": "uj"}},
+        "uj": {"points": [[2050, -100], [2150, -137], [2250, -167], [2350, -190], [2450, -207], [2550, -217], [2650, -220], [2750, -217], [2850, -207], [2950, -190], [3050, -167], [3150, -137], [3250, -100]], "jump": {"required_speed": 850}, "end": {"type": "next", "segment": "ul"}},
+        "ul": {"points": [[3250, -100], [4800, -100], [5000, 0]], "end": {"type": "next", "segment": "z"}},
+        "d": {"points": [[1800, 0], [2000, 100], [4800, 100], [5000, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[5000, 0], [5600, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {"j": {"branches": ["u", "d"], "default": 1, "pick": 0}},
+      "objects": [
+        {"type": "dummy", "segment": "a", "offset": 300},
+        {"type": "drum", "segment": "a", "offset": 550},
+        {"type": "crate", "segment": "a", "offset": 635},
+        {"type": "drum", "segment": "a", "offset": 720},
+        {"type": "dummy", "segment": "a", "offset": 1000},
+        {"type": "dummy", "segment": "a", "offset": 1250},
+        {"type": "barrel", "segment": "a", "offset": 1500},
+        {"type": "crate", "segment": "u", "offset": 229},
+        {"type": "drum", "segment": "ul", "offset": 150},
+        {"type": "crate", "segment": "ul", "offset": 235},
+        {"type": "drum", "segment": "ul", "offset": 320},
+        {"type": "crate", "segment": "ul", "offset": 405},
+        {"type": "drum", "segment": "ul", "offset": 490},
+        {"type": "dummy", "segment": "ul", "offset": 800},
+        {"type": "dummy", "segment": "ul", "offset": 1050},
+        {"type": "dummy", "segment": "ul", "offset": 1300},
+        {"type": "dummy", "segment": "ul", "offset": 1500, "level": 3},
+        {"type": "crate", "segment": "d", "offset": 229},
+        {"type": "crate", "segment": "d", "offset": 1500},
+        {"type": "crate", "segment": "d", "offset": 2700}
+      ]
+    },
+    {
+      "id": "dummies_vs_drums", "weight": 3, "min_level": 0,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1400, 0]], "end": {"type": "junction", "id": "j"}},
+        "u": {"points": [[1400, 0], [1600, -100], [4200, -100], [4400, 0]], "end": {"type": "next", "segment": "z"}},
+        "d": {"points": [[1400, 0], [1600, 100], [4200, 100], [4400, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[4400, 0], [5000, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {"j": {"branches": ["u", "d"], "default": 0, "pick": 1}},
+      "objects": [
+        {"type": "crate", "segment": "a", "offset": 500},
+        {"type": "crate", "segment": "a", "offset": 900},
+        {"type": "barrel", "segment": "a", "offset": 1200},
+        {"type": "dummy", "segment": "u", "offset": 229},
+        {"type": "dummy", "segment": "u", "offset": 529},
+        {"type": "dummy", "segment": "u", "offset": 829},
+        {"type": "dummy", "segment": "u", "offset": 1129},
+        {"type": "dummy", "segment": "u", "offset": 1429},
+        {"type": "dummy", "segment": "u", "offset": 1729},
+        {"type": "drum", "segment": "d", "offset": 229},
+        {"type": "crate", "segment": "d", "offset": 314},
+        {"type": "drum", "segment": "d", "offset": 399},
+        {"type": "dummy", "segment": "d", "offset": 484},
+        {"type": "drum", "segment": "d", "offset": 569},
+        {"type": "crate", "segment": "d", "offset": 654},
+        {"type": "drum", "segment": "d", "offset": 739},
+        {"type": "dummy", "segment": "d", "offset": 824},
+        {"type": "drum", "segment": "d", "offset": 909},
+        {"type": "barrel", "segment": "d", "offset": 1300},
+        {"type": "barrel", "segment": "d", "offset": 1600},
+        {"type": "barrel", "segment": "d", "offset": 1900},
+        {"type": "barrel", "segment": "d", "offset": 2200, "level": 1},
+        {"type": "barrel", "segment": "d", "offset": 2500, "level": 3},
+        {"type": "dummy", "segment": "u", "offset": 2029, "level": 2}
+      ]
+    },
+    {
+      "id": "double_fork", "weight": 2, "min_level": 1,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1200, 0]], "end": {"type": "junction", "id": "j0"}},
+        "u1": {"points": [[1200, 0], [1400, -100], [3400, -100], [3600, 0]], "end": {"type": "next", "segment": "m"}},
+        "d1": {"points": [[1200, 0], [1400, 100], [3400, 100], [3600, 0]], "end": {"type": "next", "segment": "m"}},
+        "m": {"points": [[3600, 0], [4400, 0]], "end": {"type": "junction", "id": "j1"}},
+        "u2": {"points": [[4400, 0], [4600, -100], [7200, -100], [7400, 0]], "end": {"type": "next", "segment": "z"}},
+        "d2": {"points": [[4400, 0], [4600, 100], [7200, 100], [7400, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[7400, 0], [8000, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {
+        "j0": {"branches": ["u1", "d1"], "default": 1, "pick": 0},
+        "j1": {"branches": ["u2", "d2"], "default": 1, "pick": 0}
+      },
+      "objects": [
+        {"type": "crate", "segment": "a", "offset": 500},
+        {"type": "barrel", "segment": "a", "offset": 800},
+        {"type": "dummy", "segment": "u1", "offset": 229},
+        {"type": "dummy", "segment": "u1", "offset": 479},
+        {"type": "dummy", "segment": "u1", "offset": 729},
+        {"type": "drum", "segment": "u1", "offset": 979},
+        {"type": "crate", "segment": "u1", "offset": 1064},
+        {"type": "drum", "segment": "u1", "offset": 1149},
+        {"type": "dummy", "segment": "u1", "offset": 1479},
+        {"type": "dummy", "segment": "u1", "offset": 1729},
+        {"type": "dummy", "segment": "u1", "offset": 1979, "level": 2},
+        {"type": "barrel", "segment": "d1", "offset": 229},
+        {"type": "barrel", "segment": "d1", "offset": 1200},
+        {"type": "barrel", "segment": "d1", "offset": 2200},
+        {"type": "crate", "segment": "m", "offset": 200},
+        {"type": "dummy", "segment": "m", "offset": 450},
+        {"type": "wall", "segment": "u2", "offset": 264, "required_speed": 800},
+        {"type": "dummy", "segment": "u2", "offset": 600},
+        {"type": "dummy", "segment": "u2", "offset": 850},
+        {"type": "dummy", "segment": "u2", "offset": 1100},
+        {"type": "drum", "segment": "u2", "offset": 1400},
+        {"type": "crate", "segment": "u2", "offset": 1485},
+        {"type": "drum", "segment": "u2", "offset": 1570},
+        {"type": "dummy", "segment": "u2", "offset": 1900},
+        {"type": "dummy", "segment": "u2", "offset": 2150},
+        {"type": "dummy", "segment": "u2", "offset": 2400, "level": 3},
+        {"type": "crate", "segment": "d2", "offset": 229},
+        {"type": "crate", "segment": "d2", "offset": 1500},
+        {"type": "crate", "segment": "d2", "offset": 2700}
+      ]
+    },
+    {
+      "id": "wall_then_jump", "weight": 2, "min_level": 2,
+      "entry": "a",
+      "segments": {
+        "a": {"points": [[0, 0], [1600, 0]], "end": {"type": "junction", "id": "j0"}},
+        "u1": {"points": [[1600, 0], [1800, -100], [4000, -100], [4200, 0]], "end": {"type": "next", "segment": "m"}},
+        "d1": {"points": [[1600, 0], [1800, 100], [4000, 100], [4200, 0]], "end": {"type": "next", "segment": "m"}},
+        "m": {"points": [[4200, 0], [5000, 0]], "end": {"type": "junction", "id": "j1"}},
+        "u2": {"points": [[5000, 0], [5200, -100], [5250, -100]], "end": {"type": "next", "segment": "u2j"}},
+        "u2j": {"points": [[5250, -100], [5350, -137], [5450, -167], [5550, -190], [5650, -207], [5750, -217], [5850, -220], [5950, -217], [6050, -207], [6150, -190], [6250, -167], [6350, -137], [6450, -100]], "jump": {"required_speed": 850}, "end": {"type": "next", "segment": "u2l"}},
+        "u2l": {"points": [[6450, -100], [7800, -100], [8000, 0]], "end": {"type": "next", "segment": "z"}},
+        "d2": {"points": [[5000, 0], [5200, 100], [7800, 100], [8000, 0]], "end": {"type": "next", "segment": "z"}},
+        "z": {"points": [[8000, 0], [8600, 0]], "end": {"type": "exit"}}
+      },
+      "junctions": {
+        "j0": {"branches": ["u1", "d1"], "default": 1, "pick": 0},
+        "j1": {"branches": ["u2", "d2"], "default": 1, "pick": 0}
+      },
+      "objects": [
+        {"type": "dummy", "segment": "a", "offset": 300},
+        {"type": "dummy", "segment": "a", "offset": 550},
+        {"type": "drum", "segment": "a", "offset": 800},
+        {"type": "crate", "segment": "a", "offset": 885},
+        {"type": "dummy", "segment": "a", "offset": 1100},
+        {"type": "barrel", "segment": "a", "offset": 1350},
+        {"type": "wall", "segment": "u1", "offset": 264, "required_speed": 800},
+        {"type": "dummy", "segment": "u1", "offset": 600},
+        {"type": "dummy", "segment": "u1", "offset": 850},
+        {"type": "dummy", "segment": "u1", "offset": 1100},
+        {"type": "drum", "segment": "u1", "offset": 1400},
+        {"type": "crate", "segment": "u1", "offset": 1485},
+        {"type": "drum", "segment": "u1", "offset": 1570},
+        {"type": "dummy", "segment": "u1", "offset": 1900},
+        {"type": "dummy", "segment": "u1", "offset": 2150, "level": 4},
+        {"type": "crate", "segment": "d1", "offset": 229},
+        {"type": "crate", "segment": "d1", "offset": 1300},
+        {"type": "crate", "segment": "d1", "offset": 2300},
+        {"type": "dummy", "segment": "m", "offset": 250},
+        {"type": "dummy", "segment": "m", "offset": 500},
+        {"type": "crate", "segment": "u2", "offset": 229},
+        {"type": "dummy", "segment": "u2l", "offset": 150},
+        {"type": "barrel", "segment": "u2l", "offset": 310},
+        {"type": "dummy", "segment": "u2l", "offset": 470},
+        {"type": "barrel", "segment": "u2l", "offset": 630},
+        {"type": "dummy", "segment": "u2l", "offset": 790},
+        {"type": "barrel", "segment": "u2l", "offset": 950},
+        {"type": "dummy", "segment": "u2l", "offset": 1110, "level": 4},
+        {"type": "crate", "segment": "d2", "offset": 229},
+        {"type": "crate", "segment": "d2", "offset": 1500},
+        {"type": "crate", "segment": "d2", "offset": 2700}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,366 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/stage_select.gd" id="1"]
+[ext_resource type="Script" path="res://scenes/ui/ui_button.gd" id="2"]
+
+[node name="StageSelect" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Header" type="Control" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 96.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="Head" type="HBoxContainer" parent="Header"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 64.0
+offset_right = 640.0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 20
+
+[node name="Heading" type="Label" parent="Header/Head"]
+unique_name_in_owner = true
+size_flags_vertical = 8
+text = "試験計画表"
+
+[node name="Sub" type="Label" parent="Header/Head"]
+unique_name_in_owner = true
+size_flags_vertical = 8
+text = "SELECT TEST"
+
+[node name="TotalRow" type="HBoxContainer" parent="Header"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -464.0
+offset_right = -64.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="TotalStar" type="Label" parent="Header/TotalRow"]
+unique_name_in_owner = true
+size_flags_vertical = 4
+text = "★"
+
+[node name="Total" type="Label" parent="Header/TotalRow"]
+unique_name_in_owner = true
+size_flags_vertical = 4
+
+[node name="Pages" type="HBoxContainer" parent="Header"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -214.0
+offset_top = -20.0
+offset_right = 410.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Page" type="Control" parent="Header/Pages"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Text" type="Label" parent="Header/Pages/Page"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Cards" type="HBoxContainer" parent="."]
+offset_left = 64.0
+offset_top = 144.0
+offset_right = 1216.0
+offset_bottom = 394.0
+mouse_filter = 2
+theme_override_constants/separation = 20
+
+[node name="Card" type="Control" parent="Cards"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Body" type="VBoxContainer" parent="Cards/Card"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Num" type="Label" parent="Cards/Card/Body"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Cards/Card/Body"]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="IconBox" type="MarginContainer" parent="Cards/Card/Body"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_override_constants/margin_top = 4
+
+[node name="Icon" type="Control" parent="Cards/Card/Body/IconBox"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Stars" type="HBoxContainer" parent="Cards/Card/Body"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="Got" type="Label" parent="Cards/Card/Body/Stars"]
+layout_mode = 2
+
+[node name="Rest" type="Label" parent="Cards/Card/Body/Stars"]
+layout_mode = 2
+
+[node name="Gold" type="Label" parent="Cards/Card/Body/Stars"]
+visible = false
+layout_mode = 2
+text = "★"
+
+[node name="Fill" type="Control" parent="Cards/Card/Body/Stars"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Tasks" type="Label" parent="Cards/Card/Body/Stars"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Best" type="Label" parent="Cards/Card/Body"]
+layout_mode = 2
+
+[node name="Locked" type="Label" parent="Cards/Card/Body"]
+layout_mode = 2
+text = "未解放"
+
+[node name="LockHint" type="Label" parent="Cards/Card/Body"]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="Stamp" type="Control" parent="Cards/Card"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Detail" type="Control" parent="."]
+offset_left = 64.0
+offset_top = 412.0
+offset_right = 1216.0
+offset_bottom = 624.0
+mouse_filter = 2
+
+[node name="Info" type="VBoxContainer" parent="Detail"]
+offset_left = 28.0
+offset_top = 24.0
+offset_right = 796.0
+offset_bottom = 188.0
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Head" type="HBoxContainer" parent="Detail/Info"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="DetailNum" type="Label" parent="Detail/Info/Head"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="DetailName" type="Label" parent="Detail/Info/Head"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="Desc" type="HBoxContainer" parent="Detail/Info"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 17
+
+[node name="ElementLabel" type="Label" parent="Detail/Info/Desc"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "新要素"
+
+[node name="Element" type="Label" parent="Detail/Info/Desc"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Explain" type="Label" parent="Detail/Info/Desc"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Stats" type="HBoxContainer" parent="Detail/Info"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 28
+
+[node name="BestPair" type="HBoxContainer" parent="Detail/Info/Stats"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="BestLabel" type="Label" parent="Detail/Info/Stats/BestPair"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "最高"
+
+[node name="BestValue" type="Label" parent="Detail/Info/Stats/BestPair"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Star2Pair" type="HBoxContainer" parent="Detail/Info/Stats"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Star2Label" type="Label" parent="Detail/Info/Stats/Star2Pair"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "★2"
+
+[node name="Star2Value" type="Label" parent="Detail/Info/Stats/Star2Pair"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Star3Pair" type="HBoxContainer" parent="Detail/Info/Stats"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Star3Label" type="Label" parent="Detail/Info/Stats/Star3Pair"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "★3"
+
+[node name="Star3Value" type="Label" parent="Detail/Info/Stats/Star3Pair"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="GoldPair" type="HBoxContainer" parent="Detail/Info/Stats"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="GoldLabel" type="Label" parent="Detail/Info/Stats/GoldPair"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "金★"
+
+[node name="GoldValue" type="Label" parent="Detail/Info/Stats/GoldPair"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TimePair" type="HBoxContainer" parent="Detail/Info/Stats"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="TimeLabel" type="Label" parent="Detail/Info/Stats/TimePair"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "試験時刻"
+
+[node name="TimeValue" type="Label" parent="Detail/Info/Stats/TimePair"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Challenges" type="VBoxContainer" parent="Detail/Info"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TrolleyRow" type="HBoxContainer" parent="Detail"]
+offset_left = 824.0
+offset_top = 40.0
+offset_right = 1124.0
+offset_bottom = 92.0
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="TrolleyIcon" type="Control" parent="Detail/TrolleyRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TrolleyName" type="Label" parent="Detail/TrolleyRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+vertical_alignment = 1
+
+[node name="Garage" type="Button" parent="Detail/TrolleyRow"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_top = NodePath(".")
+focus_neighbor_bottom = NodePath("../../Start")
+text = "車両を選ぶ"
+script = ExtResource("2")
+
+[node name="Start" type="Button" parent="Detail"]
+unique_name_in_owner = true
+offset_left = 824.0
+offset_top = 108.0
+offset_right = 1124.0
+offset_bottom = 172.0
+focus_neighbor_top = NodePath("../TrolleyRow/Garage")
+focus_neighbor_bottom = NodePath("../../Back")
+text = "試験開始"
+script = ExtResource("2")
+primary = true
+key_hint = "SPACE"
+
+[node name="Back" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 64.0
+offset_top = 632.0
+offset_right = 64.0
+offset_bottom = 684.0
+focus_neighbor_top = NodePath("../Detail/Start")
+text = "戻る"
+script = ExtResource("2")
+on_ink = false
+key_hint = "Esc"
+
+[node name="Help" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 616.0
+offset_top = 632.0
+offset_right = 1216.0
+offset_bottom = 684.0
+text = "←→ 選択　　SPACE / クリック 開始　　Esc 戻る"
+horizontal_alignment = 2
+vertical_alignment = 1
