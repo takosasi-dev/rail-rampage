@@ -151,3 +151,9 @@ eadme_shots\`。GIF は `ffmpeg -framerate <撮れた fps> -i burst/%04d.jpg -t 
 - ステージの JSON を直したら `checks_stages.gd` を回す（必要速度が到達速度より 50px/s 以上低いか、分岐の1秒前に判断材料が見えるか、などを実走で確かめる）
 
 確かめる用の exe はデバッグ版で書き出す（右下の FPS 表示と `Tuning.DEBUG_FIXED_SPEED` はデバッグ版でしか効かないため）。エディタで開くときは `tools\godot\Godot_v4.7.2-stable_win64.exe` を起動する。
+
+<!-- takosasi-dev line: the sign and the links follow https://github.com/takosasi-dev/takosasi-dev -->
+<p align="center">
+<a href="https://github.com/takosasi-dev"><img src="https://raw.githubusercontent.com/takosasi-dev/takosasi-dev/main/assets/stations/rail-rampage.svg" width="640" alt="たこさし線の駅名標(作者のほかの制作物へ)"></a><br>
+<a href="https://takosasi-dev.github.io/takosasi-dev/line/?from=rail-rampage&amp;go=prev">◀ 前の駅</a> ・ <a href="https://github.com/takosasi-dev">路線図</a> ・ <a href="https://takosasi-dev.github.io/takosasi-dev/line/?from=rail-rampage&amp;go=next">次の駅 ▶</a>
+</p>
