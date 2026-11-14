@@ -66,11 +66,11 @@ async function main() {
 			await sleep(SCREEN_SETTLE_MS);
 			return ok !== null;
 		};
-		// エンジンを止めて（同じ origin の無いページへ移って）から user:// に書く
+		// エンジンを止めて（同じ origin の無いページへ移って）から保存（Web は localStorage）に書く
 		const writeFiles = async (files) => {
 			await b.open(`${b.origin}/${BLANK}`);
 			await sleep(SCREEN_SETTLE_MS / 4);
-			await b.writeUserfs(files);
+			await b.writeSaves(files);
 		};
 		if (!expect(await openGame(), '1回目の起動（保存領域とフォルダを作る）')) return;
 		await sleep(SCREEN_SETTLE_MS); // シェーダーの記録を書き終えるまで

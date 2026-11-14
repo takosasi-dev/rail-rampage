@@ -29,7 +29,7 @@ try {
 	await sleep(SCREEN_SETTLE_MS);
 	await b.open(`${b.origin}/__blank`);
 	await sleep(SCREEN_SETTLE_MS / 4);
-	await b.writeUserfs({ 'save.cfg': SAVE, 'settings.cfg': SETTINGS });
+	await b.writeSaves({ 'save.cfg': SAVE, 'settings.cfg': SETTINGS }); // 保存は Web では localStorage
 	await openGame();
 	await shot('title');
 	await b.press('Enter'); // 「試験開始」

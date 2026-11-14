@@ -16,8 +16,11 @@ const BROWSERS = [
 	'C:/Program Files/Google/Chrome/Application/chrome.exe',
 	'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
 ];
-// Godot の user:// は IndexedDB '/userfs' の 'FILE_DATA' に、このフォルダの下のキーで写される
-const USER_DIR = '/userfs/godot/app_userdata/RailRampage';
+// Godot の user:// は IndexedDB '/userfs' の 'FILE_DATA' に、このフォルダの下のキーで写される。
+// '/userfs' は同じサイトの Godot のゲーム全部で 1 つなので、v0.1.1 からゲームは Web では user:// に書かない（v0.1.0 の保存を読むだけ）
+export const USER_DIR = '/userfs/godot/app_userdata/RailRampage';
+// Web の保存（autoload/game_state.gd）: localStorage の rail-rampage/<ファイル名>
+const SAVE_PREFIX = 'rail-rampage/';
 const KEYS = {
 	Enter: { key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' },
 	Space: { key: ' ', code: 'Space', windowsVirtualKeyCode: 32, text: ' ' },
@@ -42,21 +45,21 @@ const READ_USERFS = `new Promise((resolve) => {
 		};
 	};
 })`;
-// user:// にファイルを書く（{ ファイル名: 中身 }）。エンジンが動いていないページで呼ぶ（動いていると上書きされうる）。
-// 1回目の起動で保存領域が作られた後に使う。親フォルダの記録も書く（無いと、起動時にファイルを読み込めない）
-const writeUserfsExpr = (files) => `new Promise((resolve, reject) => {
+// '/userfs' にファイルを書く（{ '/userfs/…' のパス: 中身 }）。1回目の起動で保存領域が作られた後に使う。
+// 親フォルダの記録も書く（無いと、起動時にファイルを読み込めない）
+const userfsPutExpr = (files) => `new Promise((resolve, reject) => {
 	const req = indexedDB.open('/userfs');
 	req.onerror = () => reject(String(req.error));
 	req.onsuccess = () => {
 		const db = req.result;
 		const tx = db.transaction('FILE_DATA', 'readwrite');
 		const store = tx.objectStore('FILE_DATA');
-		const parts = '${USER_DIR}'.split('/').filter(Boolean);
-		for (let i = 2; i <= parts.length; i++) { // '/userfs' の下のフォルダを上から順に
-			store.put({ timestamp: new Date(), mode: 16877 }, '/' + parts.slice(0, i).join('/'));
-		}
-		for (const [name, text] of Object.entries(${JSON.stringify(files)})) {
-			store.put({ timestamp: new Date(), mode: 33188, contents: new TextEncoder().encode(text) }, '${USER_DIR}/' + name);
+		for (const [p, text] of Object.entries(${JSON.stringify(files)})) {
+			const parts = p.split('/').filter(Boolean);
+			for (let i = 2; i < parts.length; i++) { // '/userfs' の下のフォルダを上から順に
+				store.put({ timestamp: new Date(), mode: 16877 }, '/' + parts.slice(0, i).join('/'));
+			}
+			store.put({ timestamp: new Date(), mode: 33188, contents: new TextEncoder().encode(text) }, p);
 		}
 		tx.oncomplete = () => { db.close(); resolve(true); };
 		tx.onerror = () => reject(String(tx.error));
@@ -164,7 +167,17 @@ export async function launch({ httpPort, cdpPort, profile, dir = WEB }) {
 			await page.send('Input.dispatchKeyEvent', { type: 'keyUp', ...KEYS[name] });
 		},
 		readUserfs: async () => (await evaluate(READ_USERFS)) ?? {},
-		writeUserfs: (files) => evaluate(writeUserfsExpr(files)),
+		// user:// のファイル（{ ファイル名: 中身 }）を '/userfs' に書く。v0.1.0 までの保存の代わり
+		writeUserfs: (files) => evaluate(userfsPutExpr(Object.fromEntries(Object.entries(files).map(([n, t]) => [`${USER_DIR}/${n}`, t])))),
+		// '/userfs' の好きな所に書く（別のゲームの保存の代わり）
+		userfsPut: (files) => evaluate(userfsPutExpr(files)),
+		// ゲームの保存（localStorage）を読む。無ければ null
+		saved: async (name) => (await evaluate(`localStorage.getItem(${JSON.stringify(SAVE_PREFIX + name)})`)) ?? null,
+		// ゲームの保存（{ ファイル名: 中身 }）を localStorage に入れる。エンジンが動いていないページで呼ぶ（動いていると次の保存で上書きされる）
+		writeSaves: (files) => evaluate(`(() => {
+			for (const [n, t] of Object.entries(${JSON.stringify(files)})) localStorage.setItem(${JSON.stringify(SAVE_PREFIX)} + n, t);
+			return true;
+		})()`),
 		errors: () => logs.filter((l) => ['error', 'exception'].includes(l.level)),
 		close: async () => { page.close(); await stop(); },
 	};

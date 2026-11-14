@@ -25,7 +25,7 @@ func _run() -> void:
 	_gs.settings_path = TEST_SETTINGS
 	_gs.save_path = TEST_SAVE
 	var checks: Array[Callable] = [_check_numbers, _check_ex_unlock, _check_gold_record, _check_challenges,
-			_check_challenge_texts, _check_progression, _check_garage, _check_broken_garage, _check_endless, _check_ghost, _check_locked_trolley_records,
+			_check_challenge_texts, _check_progression, _check_garage, _check_broken_garage, _check_endless, _check_ghost, _check_web_text, _check_locked_trolley_records,
 			_check_erase, _check_new_stamps, _check_game_hooks, _check_game_upgrades]
 	for check: Callable in checks:
 		_reset()
@@ -241,6 +241,24 @@ func _check_ghost() -> bool:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_SAVE))  # 記録のファイルだけ消した
 	_gs.load_records()
 	_expect(_gs.ghost(1).is_empty(), "記録のファイルが無ければ、残っているゴーストのファイルは読まない")
+	return true
+
+
+# Web は保存をファイルでなく文字（ConfigFile の encode_to_text と parse）で localStorage に置く（game_state.gd の _save_cfg）。
+# その文字はファイルの中身と同じで、読み直すと同じ値（ゴーストの点も）に戻る
+func _check_web_text() -> bool:
+	_gs.submit_clear(1, 100, 1, Trolleys.DEFAULT)
+	_gs.submit_ghost(1, {"score": 100, "dt": 0.05, "points": PackedVector3Array([Vector3(8.236917, 600, 0), Vector3(24.977015, 599.99994, -0.25)])})
+	for path: String in [TEST_SAVE, _gs.ghosts_path()]:
+		var file := ConfigFile.new()
+		var text := ConfigFile.new()
+		var ok: bool = file.load(path) == OK and file.encode_to_text() == FileAccess.get_file_as_string(path)
+		ok = ok and text.parse(file.encode_to_text()) == OK and text.encode_to_text() == file.encode_to_text()
+		for section: String in file.get_sections():
+			for key: String in file.get_section_keys(section):
+				ok = ok and text.get_value(section, key) == file.get_value(section, key)
+		_expect(ok, "Web の保存の文字は %s の中身と同じで、読み直すと同じ値に戻る" % path.get_file())
+	_expect(ConfigFile.new().parse("") == OK, "空の文字（Web で記録を消した後の保存）は空の保存として読める")
 	return true
 
 

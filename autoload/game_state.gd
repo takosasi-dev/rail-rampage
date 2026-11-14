@@ -18,6 +18,15 @@ const ENDLESS_SECTION: String = "endless"
 const GHOSTS_SUFFIX: String = "_ghosts.cfg"  # ゴーストのファイル: 記録のファイルの名前 + これ（user://save_ghosts.cfg）
 const GHOST_KEY: String = "data"
 const TROLLEY_KEY_FORMAT: String = "%s/%s"  # 標準型以外の車両の記録のセクション名（"stage_01/heavy"）
+## Web の保存の置き場（v0.1.1 から）: ブラウザの localStorage に、このゲームだけのキー "rail-rampage/<ファイル名>" で置く。
+## user:// の実体（IndexedDB の /userfs）は同じサイトの Godot のゲーム全部で 1 つで、どれかのタブが user:// に書くと、そのタブが
+## 起動した時の写しで全体を書き戻す（別のタブ・別のゲームの新しい保存が古い物に戻る・消える）ので、Web では user:// に書かない。
+## localStorage にまだ無いファイルは v0.1.0 の user:// のファイルを読む（次に書く時に localStorage へ移る）。Web 以外は今までどおりファイル。
+## 別のタブとの間は、書く前に読み直さないので最後に書いた方が勝つ
+const WEB_KEY_PREFIX: String = "rail-rampage/"
+## 使えない時（保存を止めたブラウザなど）は投げずに null / false を返す。%s にはキーと中身を JSON の文字列で入れる
+const JS_READ: String = "(() => { try { return localStorage.getItem(%s); } catch (e) { return null; } })()"
+const JS_WRITE: String = "(() => { try { localStorage.setItem(%s, %s); return true; } catch (e) { return false; } })()"
 ## 試験記録（累計）と検定印の save.cfg のセクション（設計書 docs/superpowers/specs/2026-09-26-records-design.md の 2.1）
 const STATS_SECTION: String = "stats"
 const STAMPS_SECTION: String = "stamps"
@@ -54,6 +63,7 @@ var _challenges: Dictionary = {}  # 試験番号 → 課題の達成（bool × C
 var _garage: Dictionary = {}  # 車両 id → {"xp": int, "upgrades": {項目 id: 段}, "paint": int}
 var _endless: Dictionary = {}  # 車両 id → {"best_score": int, "best_distance": float}
 var _ghosts: Variant = null  # 試験番号 → ゴーストの辞書。null はまだ読んでいない（大きいので必要になったときに読む）
+var _web: bool = OS.has_feature("web")
 
 
 func _ready() -> void:
@@ -90,7 +100,7 @@ func load_settings() -> void:
 	show_ghost = true
 	current_trolley = Trolleys.DEFAULT
 	var cfg := ConfigFile.new()
-	if cfg.load(settings_path) == OK:
+	if _load_cfg(cfg, settings_path) == OK:
 		# 既定値に null を渡すと、キーが無いときに Godot がエラーを出す（null は「既定値なし」の意味）
 		var v: Variant = cfg.get_value(SECTION, "se_volume", se_volume)
 		if v is int and v >= 0 and v <= Tuning.SE_VOLUME_MAX:
@@ -225,7 +235,26 @@ func save_settings() -> void:
 	cfg.set_value(SECTION, "show_fps", show_fps)
 	cfg.set_value(SECTION, "show_ghost", show_ghost)
 	cfg.set_value(SECTION, "trolley", current_trolley)
-	cfg.save(settings_path)
+	_save_cfg(cfg, settings_path)
+
+
+## path（user://…）の ConfigFile を読む。Web は localStorage（空の文字も保存の1つ。記録の消去の後）、無ければ v0.1.0 の user:// のファイル
+func _load_cfg(cfg: ConfigFile, path: String) -> Error:
+	if _web:
+		var text: Variant = JavaScriptBridge.eval(JS_READ % JSON.stringify(WEB_KEY_PREFIX + path.get_file()), true)
+		if text is String:
+			return cfg.parse(text)
+	return cfg.load(path)
+
+
+## path（user://…）に書く。Web は localStorage だけ（書けなくても user:// には逃がさない）
+func _save_cfg(cfg: ConfigFile, path: String) -> void:
+	if not _web:
+		cfg.save(path)
+		return
+	var ok: Variant = JavaScriptBridge.eval(JS_WRITE % [JSON.stringify(WEB_KEY_PREFIX + path.get_file()), JSON.stringify(cfg.encode_to_text())], true)
+	if not ok:  # JS の true は bool では返らない（Godot 4.7.2 の Web。`ok is bool` だと書けても失敗に見える）。投げた時は null
+		push_warning("保存をブラウザに書けなかった（%s）" % path.get_file())
 
 
 ## 窓の全画面・窓を今の設定に合わせる。Web 版はブラウザに任せ、窓の無い headless（自動確認）では何もしない
@@ -345,7 +374,7 @@ func load_records() -> void:
 	_endless.clear()
 	_ghosts = null
 	var cfg := ConfigFile.new()
-	if cfg.load(save_path) != OK:
+	if _load_cfg(cfg, save_path) != OK:
 		_ghosts = {}  # 記録が無い（読めない）なら、隣に残ったゴーストのファイルも読まない
 		_reset_locked_trolley()
 		return
@@ -395,7 +424,7 @@ func save_records() -> void:
 		var key: String = ENDLESS_SECTION if id == Trolleys.DEFAULT else TROLLEY_KEY_FORMAT % [ENDLESS_SECTION, id]
 		for field: String in _endless[id]:
 			cfg.set_value(key, field, _endless[id][field])
-	cfg.save(save_path)
+	_save_cfg(cfg, save_path)
 
 
 ## FR-47c: 記録を初期状態にする（save.cfg も空にする）。設定は消さない。試験記録の累計と検定印も記録なので消す
@@ -407,7 +436,10 @@ func erase_records() -> void:
 	_garage.clear()
 	_endless.clear()
 	_ghosts = {}
-	DirAccess.remove_absolute(ghosts_path())
+	if _web:
+		_save_cfg(ConfigFile.new(), ghosts_path())  # キーを消すと、次に v0.1.0 の user:// のゴーストを読んでしまうので空にする
+	else:
+		DirAccess.remove_absolute(ghosts_path())
 	save_records()
 	_reset_locked_trolley()
 
@@ -681,7 +713,7 @@ func submit_ghost(n: int, data: Dictionary) -> bool:
 	var cfg := ConfigFile.new()
 	for k: int in _ghosts:
 		cfg.set_value(stage_key(k), GHOST_KEY, _ghosts[k])
-	cfg.save(ghosts_path())
+	_save_cfg(cfg, ghosts_path())
 	return true
 
 
@@ -695,7 +727,7 @@ func _load_ghosts() -> void:
 		return
 	_ghosts = {}
 	var cfg := ConfigFile.new()
-	if cfg.load(ghosts_path()) != OK:
+	if _load_cfg(cfg, ghosts_path()) != OK:
 		return
 	for n: int in all_stages():
 		var d: Variant = cfg.get_value(stage_key(n), GHOST_KEY, {})

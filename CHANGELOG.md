@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-14
+
+### Fixed
+
+- ブラウザ版で、記録・設定・ゴーストが消えたり古い物に戻ったりすることがあった。同じサイト（takosasi-dev.github.io）のほかのゲームや、RailRampage を開いた別のタブが保存すると起きていた。ブラウザ版の保存はブラウザの localStorage に置くようにした。0.1.0 の記録・設定・ゴーストはそのまま引き継ぐ（次に保存したときに移る）。Windows 版の保存は今までどおり
+
 ### Added
 
 - ブラウザですぐ遊べるページ（GitHub Pages。Release の Web 版を `.github/workflows/pages.yml` で置く）
