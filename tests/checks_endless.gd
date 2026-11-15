@@ -8,22 +8,34 @@ extends SceneTree
 ## 3. ゲーム画面で自動操縦（選ぶ出口を選ぶ）して数十区間を走る: 区間が足され・消され、ノードの数が増え続けない、
 ##    激突しない（L-5 の到達速度）、分岐の1秒前の画面に判断材料（L-3）。5台で
 ## 4. 激突でリザルトが出て記録が残る、「もう一度」「タイトルへ」。タイトルの錠前
-## 記録と設定は確認用のファイルに差し替え、終わったら消す。
+## 3 の線路は乱数の種を決めて組む（DRIVE_SEEDS。ゲームは走るたびに種を変えるので、1回の実行の乱数に頼らない）。
+## 多数の種で 3 だけを回すときは -- seeds=N（例: -- seeds=200。5台 × 200 種で約1時間）。from=M で種 M から、
+## trolley=<id> で1台だけ、parts=P で1つの種ごとに通り過ぎる区間の数（既定 SWEEP_PARTS）。外れた確認だけを車両ごとにまとめて出す。
+## 区間の型・車両の速さ・カメラを変えたら回す（from= と trolley= で分けて、並べて走らせてもよい）
+## 記録と設定は確認用のファイル（プロセスごとの名前。並べて走らせてもぶつからない）に差し替え、終わったら消す。
 
 const GAME_SCENE: String = "res://scenes/game.tscn"
 const NODE_GROWTH_MAX: float = 1.6  # 後半のノードの数の最大 ÷ 前半の最大の上限（増え続けていないかの目安）
 const TITLE_SCENE: String = "res://scenes/title.tscn"
-const SETTINGS_PATH: String = "user://checks_endless_settings.cfg"
-const SAVE_PATH: String = "user://checks_endless_save.cfg"
 const MIN_TYPES: int = 10  # 型の数（始まりの型を除く）
 const SEEDS: int = 60  # 生成を回す乱数の種の数（車両ごと）
 const GEN_PARTS: int = 40  # 1つの種で作る区間の数
-const LEAD_SLACK: float = 40.0  # L-3 の見積もりの余裕（px）。本当の見え方はゲーム画面で確かめる
+## L-3 の見積もりの余裕（px）。見積もりは一定の速さで着くとするが、加速しながら着くと1秒前は遅くて画面が狭く、その1秒で
+## 進む距離は長いので、右端はもっと手前に来る（v0.1.1 の型で実走 約90px）。壁・ジャンプは分岐から x +216・+230 まで
+## （ステージと同じ）に置き、分岐の手前で加速しすぎない並びにした型で、実走の余白が残る値。本当の見え方はゲーム画面で確かめる（3）
+const LEAD_SLACK: float = 75.0
 const BLAST_SLACK: float = 10.0  # 爆破で崩れる壁: ドラム缶の中心から壁の中心までが爆発の範囲よりこれだけ内側
 const DRIVE_PARTS: Dictionary = {"standard": 30, "heavy": 12, "light": 12, "blast": 12, "prototype": 12}  # 自動操縦で通り過ぎる区間の数
+## 自動操縦の線路の種。どれも v0.1.1 で、加速しながら壁・ジャンプの分岐に着いて L-3 を外した種（発破型は外れる寸前だった種）
+const DRIVE_SEEDS: Dictionary = {"standard": 111, "heavy": 194, "light": 194, "blast": 126, "prototype": 194}
+const SWEEP_PARTS: int = 8  # -- seeds=N の1つの種ごとの区間の数（段0〜3。L-3 を外しやすいのは、まだ加速している序盤）
 const MAX_FRAMES: int = 60000
 
 var _failed: int = 0
+var _settings_path: String = "user://checks_endless_%d_settings.cfg" % OS.get_process_id()
+var _save_path: String = "user://checks_endless_%d_save.cfg" % OS.get_process_id()
+var _quiet: bool = false  # 多数の種を回している間は、外れた確認だけを _misses に集める（_sweep が車両ごとに出す）
+var _misses: Array[String] = []
 var _game_state: Node
 var _time_scale: Node
 
@@ -35,15 +47,42 @@ func _initialize() -> void:
 func _run() -> void:
 	_game_state = root.get_node("GameState")
 	_time_scale = root.get_node("TimeScale")
-	_game_state.settings_path = SETTINGS_PATH
-	_game_state.save_path = SAVE_PATH
+	_game_state.settings_path = _settings_path
+	_game_state.save_path = _save_path
 	_game_state.erase_records()
+	var args: Dictionary = {}  # -- seeds=200 from=0 trolley=heavy parts=8
+	for a: String in OS.get_cmdline_user_args():
+		var kv: PackedStringArray = a.split("=")
+		args[kv[0]] = kv[1] if kv.size() > 1 else ""
+	if args.has("seeds"):
+		await _sweep(args)
+		await _finish()
+		return
 	_check_types()
 	_check_generation()
 	for id: String in Trolleys.IDS:
-		if await _drive(id) != true:
+		if await _drive(id, DRIVE_SEEDS[id], DRIVE_PARTS[id]) != true:
 			_expect(false, "%s の自動操縦が途中で止まった" % id)
 	await _finish()
+
+
+## 多数の種（-- seeds=N）: 種 from〜from+N−1 で車両ごとに自動操縦し、激突しない・L-5・L-3 などの外れを車両ごとにまとめて出す
+func _sweep(args: Dictionary) -> void:
+	var from: int = int(args.get("from", "0"))
+	var count: int = int(args["seeds"])
+	var parts: int = int(args.get("parts", str(SWEEP_PARTS)))
+	var ids: Array = Array(Trolleys.IDS)
+	if args.has("trolley"):
+		ids = [args["trolley"]]
+	for id: String in ids:
+		_quiet = true
+		_misses.clear()
+		for s: int in range(from, from + count):
+			if await _drive(id, s, parts) != true:
+				_expect(false, "%s 種%d: 自動操縦が途中で止まった" % [id, s])
+		_quiet = false
+		_expect(_misses.is_empty(), "%s: 種 %d〜%d（%d 区間ずつ）の自動操縦で、激突・脱線せず L-5・L-3 などを守る（外れ %d 件 %s）" % [
+				id, from, from + count - 1, parts, _misses.size(), _misses.slice(0, 5)])
 
 
 func _finish() -> void:
@@ -55,7 +94,7 @@ func _finish() -> void:
 	OS.delay_msec(200)
 	await physics_frame
 	await physics_frame
-	for path: String in [SETTINGS_PATH, SAVE_PATH]:
+	for path: String in [_settings_path, _save_path]:
 		if FileAccess.file_exists(path):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	print("失敗 %d 件" % _failed)
@@ -315,20 +354,22 @@ func _check_required(part: Dictionary, bad: Array[String]) -> void:
 
 # --- 3. ゲーム画面 ---
 
-## 車両 id で無限軌道を始め、選ぶ出口（pick）を選び続けて DRIVE_PARTS[id] 区間を通り過ぎる。標準型は最後に激突させて
-## リザルト・記録・「もう一度」・Esc を確かめる
-func _drive(id: String) -> bool:
+## 車両 id・種 s の線路で無限軌道を始め、選ぶ出口（pick）を選び続けて target_parts 区間を通り過ぎる。標準型は最後に
+## 激突させてリザルト・記録・「もう一度」・Esc を確かめる（多数の種を回すときは除く）
+func _drive(id: String, s: int, target_parts: int) -> bool:
+	var who: String = "%s（種 %d）" % [id, s]
 	_unlock_all()
 	_game_state.set_trolley(id)
-	_expect(_game_state.trolley() == id, "車両 %s で走らせる" % id)
+	_expect(_game_state.trolley() == id, "車両 %s で走らせる" % who)
 	_game_state.endless = true
+	seed(s)  # ゲーム画面は線路の種を randi() で決める（_endless_ready）。その前に全体の乱数の種を決めて、線路を決める
 	var game: Node = (load(GAME_SCENE) as PackedScene).instantiate()
 	root.add_child(game)
 	game.set_process_unhandled_input(false)
 	game.auto_pause = false
 	var gen: Endless = game._endless
 	_expect(gen != null and game._number == 0 and game._ghost == null and game._hint == null,
-			"%s: GameState.endless でゲーム画面は無限軌道（試験の番号 0、ゴースト・初回ヒント無し）" % id)
+			"%s: GameState.endless でゲーム画面は無限軌道（試験の番号 0、ゴースト・初回ヒント無し）" % who)
 	if gen == null:
 		game.free()
 		return true
@@ -348,7 +389,7 @@ func _drive(id: String) -> bool:
 			var req: float = game.required_for("jump", segs[sid]["jump"]["required_speed"])
 			checked[0] += 1
 			if trolley.speed < req + Tuning.REQUIRED_SPEED_MARGIN:
-				low.append("%s のジャンプ %s（必要 %.0f、到達 %.0f）" % [id, sid, req, trolley.speed])
+				low.append("%s のジャンプ %s（必要 %.0f、到達 %.0f）" % [who, sid, req, trolley.speed])
 		if end["type"] != "junction":
 			return
 		var at: float = game._time - Tuning.DECISION_LEAD_TIME
@@ -360,13 +401,12 @@ func _drive(id: String) -> bool:
 				panels = v[2]
 		for m: Array in _material(gen.data).get(end["id"], []):
 			if view == null or not (view as Rect2).has_point(m[1]):
-				unseen.append("%s の %s の %s（速度 %d、位置 %s、1秒前の画面 %s）" % [id, end["id"], m[0], trolley.speed, m[1], view])
+				unseen.append("%s の %s の %s（速度 %d、位置 %s、1秒前の画面 %s）" % [who, end["id"], m[0], trolley.speed, m[1], view])
 				continue
 			var r: Rect2 = view
 			var on_screen: Vector2 = ((m[1] as Vector2) - r.position) / r.size * game.get_viewport_rect().size
 			if panels.any(func(p: Rect2) -> bool: return p.has_point(on_screen)):
-				unseen.append("%s の %s の %s が HUD の札に隠れる" % [id, end["id"], m[0]]))
-	var target_parts: int = DRIVE_PARTS[id]
+				unseen.append("%s の %s の %s が HUD の札に隠れる" % [who, end["id"], m[0]]))
 	var max_parts: int = 0
 	var nodes_at: Dictionary = {}  # 通り過ぎて消した区間の数 → その時のノードの数
 	var passed: int = 0
@@ -397,23 +437,23 @@ func _drive(id: String) -> bool:
 			if not alive.has(wid):
 				checked[0] += 1
 				if trolley.speed < walls[wid][0] + Tuning.REQUIRED_SPEED_MARGIN:
-					low.append("%s の壁（%s、必要 %.0f、到達 %.0f）" % [id, walls[wid][1], walls[wid][0], trolley.speed])
+					low.append("%s の壁（%s、必要 %.0f、到達 %.0f）" % [who, walls[wid][1], walls[wid][0], trolley.speed])
 				walls.erase(wid)
 		if passed >= target_parts:
 			break
 	_expect(not game._finished and passed >= target_parts,
 			"%s: 自動操縦（選ぶ出口）で %d 区間を通り過ぎても激突・脱線しない（通り過ぎた %d、%s、距離 %s）" % [
-				id, target_parts, passed, game.fail_reason, Display.distance_text(game.distance)])
-	_expect(low.is_empty() and checked[0] >= 3,
-			"%s: L-5 壁・ジャンプ %d 個に必要速度 + %d 以上で着く（届かない %s）" % [id, checked[0], Tuning.REQUIRED_SPEED_MARGIN, low])
+				who, target_parts, passed, game.fail_reason, Display.distance_text(game.distance)])
+	_expect(low.is_empty() and (checked[0] >= 3 or _quiet),  # 多数の種は区間が少なく、壁・ジャンプが3つ無い線路もある
+			"%s: L-5 壁・ジャンプ %d 個に必要速度 + %d 以上で着く（届かない %s）" % [who, checked[0], Tuning.REQUIRED_SPEED_MARGIN, low])
 	_expect(unseen.is_empty(), "%s: L-3 分岐の %.1f 秒前の画面に判断材料が入り、HUD の札に隠れない（%s）" % [
-			id, Tuning.DECISION_LEAD_TIME, unseen.slice(0, 5)])
+			who, Tuning.DECISION_LEAD_TIME, unseen.slice(0, 5)])
 	_expect(max_parts <= Tuning.ENDLESS_PARTS_AHEAD + 3 and game._endless_nodes.size() == gen.parts.size()
 			and game._world.get_children().filter(func(n: Node) -> bool: return n.name.begins_with("Part")).size() <= Tuning.ENDLESS_PARTS_AHEAD + 3,
-			"%s: 区間は足されて消され、同時に組んでいるのは最大 %d 個（上限 %d）" % [id, max_parts, Tuning.ENDLESS_PARTS_AHEAD + 3])
+			"%s: 区間は足されて消され、同時に組んでいるのは最大 %d 個（上限 %d）" % [who, max_parts, Tuning.ENDLESS_PARTS_AHEAD + 3])
 	var keys: Array = nodes_at.keys()
 	keys.sort()
-	if keys.size() >= 6:
+	if keys.size() >= 6 and not _quiet:  # 多数の種の短い走行では、型の偏りで前半と後半を比べられない
 		var early: int = 0
 		var late: int = 0
 		for k: int in keys.slice(1, keys.size() / 2):
@@ -421,12 +461,12 @@ func _drive(id: String) -> bool:
 		for k: int in keys.slice(keys.size() / 2):
 			late = maxi(late, nodes_at[k])
 		# 線路は走るたびに乱数で変わり、区間の型で標的の数が違う（1.3 倍では型の偏りでたまに落ちた）
-		_expect(late <= early * NODE_GROWTH_MAX, "%s: 長く走ってもノードの数が増え続けない（前半の最大 %d、後半の最大 %d）" % [id, early, late])
+		_expect(late <= early * NODE_GROWTH_MAX, "%s: 長く走ってもノードの数が増え続けない（前半の最大 %d、後半の最大 %d）" % [who, early, late])
 	var goals: Array = game._world.find_children("*", "", true, false).filter(func(n: Node) -> bool: return n is Goal)
-	_expect(goals.is_empty(), "%s: 区間の境目にゴールを置かない（%d 個）" % [id, goals.size()])
+	_expect(goals.is_empty(), "%s: 区間の境目にゴールを置かない（%d 個）" % [who, goals.size()])
 	var hud_text: String = game.endless_title_text()
-	_expect(hud_text.begins_with("無限軌道") and hud_text.ends_with("m"), "%s: HUD の見出しは「無限軌道」と距離（%s）" % [id, hud_text])
-	if id == Trolleys.DEFAULT:
+	_expect(hud_text.begins_with("無限軌道") and hud_text.ends_with("m"), "%s: HUD の見出しは「無限軌道」と距離（%s）" % [who, hud_text])
+	if id == Trolleys.DEFAULT and not _quiet:
 		await _check_result(game)
 	else:
 		game.free()
@@ -559,6 +599,10 @@ func _unlock_all() -> void:
 
 
 func _expect(ok: bool, label: String) -> void:
+	if _quiet:
+		if not ok:
+			_misses.append(label)
+		return
 	print(("OK  " if ok else "NG  ") + label)
 	if not ok:
 		_failed += 1

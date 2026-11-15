@@ -288,7 +288,7 @@ const TITLE_NAME_FONT_SIZE: int = 124
 const TITLE_HELP_FONT_SIZE: int = 15
 # TODO(spec): バージョンの付け方は仕様に無い。デザイン案の表記。書き出し設定と揃えるなら project.godot の
 #             application/config/version に移す
-const GAME_VERSION: String = "v0.1.1"
+const GAME_VERSION: String = "v0.1.2"
 # タイトルの挿絵（700×560）。座標は挿絵の左上から、デザイン案の SVG の値
 const TITLE_ART_GROUND: Rect2 = Rect2(0, 500, 700, 60)
 const TITLE_ART_ROUTES: Array = [  # 分岐の手前と選択中の出口（上）、選ばれていない出口（下）
